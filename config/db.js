@@ -7,7 +7,7 @@ dotenv.config({path: '.env'});
 
 const db = new Sequelize(process.env.BD_NAME, process.env.BD_USER, process.env.BD_PASS, {
   host: process.env.BD_HOST,  // Dirección del servidor de la base de datos (en este caso, es local).
-  port: 3306,         // Puerto por defecto de MySQL.
+  port: 3307,         // Puerto por defecto de MySQL.
   dialect: 'mysql',   // Tipo de base de datos (en este caso, MySQL).
   
   // Opciones adicionales de configuración
