@@ -5,12 +5,9 @@ import Usuario from '../models/Usuario.js';
 import { generarJWT, generarId } from '../helpers/tokens.js';
 import { emailRegistro, emailOlvidePassword } from '../helpers/emails.js';
 
-// Controlador para la vista de inicio de sesión
-// Este controlador maneja la solicitud para mostrar el formulario de inicio de sesión.
-// Renderiza la plantilla 'auth/login.pug' y envía datos a la vista, como el título de la página.
 const formularioLogin = (req, res) => {
   res.render('auth/login', {
-    pagina: 'Iniciar Sesión', // Título dinámico para la página.
+    pagina: 'Iniciar Sesión',
     csrfToken: req.csrfToken()
   });
 };
@@ -80,9 +77,6 @@ const cerrarSesion = (req, res) => {
   return res.clearCookie('_token').status(200).redirect('/auth/login');
 };
 
-// Controlador para la vista de registro de usuarios
-// Este controlador maneja la solicitud para mostrar el formulario de registro.
-// Renderiza la plantilla 'auth/registro.pug' y envía datos a la vista, como el título de la página.
 const formularioRegistro = (req, res) => {
   res.render('auth/registro', {
     pagina: 'Crear Cuenta',
@@ -91,7 +85,7 @@ const formularioRegistro = (req, res) => {
 };
 
 const registrar = async (req, res) => {
-  //* Validación
+  // Validación
   await check('nombre').notEmpty().withMessage('El Nombre no puede ir vacío').run(req);
   await check('email').isEmail().withMessage('Eso no parece un email').run(req);
   await check('password').isLength({ min: 6 }).withMessage('El Password debe ser de al menos 6 caracteres').run(req);
@@ -99,9 +93,9 @@ const registrar = async (req, res) => {
 
   let resultado = validationResult(req);
 
-  //* Verificar que el resultado este vacío
+  // Verificar que el resultado este vacío
   if (!resultado.isEmpty()) {
-    //* Errores
+    // Errores
     return res.render('auth/registro', {
       pagina: 'Crear Cuenta',
       csrfToken: req.csrfToken(),
@@ -113,10 +107,10 @@ const registrar = async (req, res) => {
     })
   }
 
-  //* Extraer los datos
+  // Extraer los datos
   const { nombre, email, password } = req.body;
 
-  //* Verificar que el usuario no este duplicado
+  // Verificar que el usuario no este duplicado
   const existeUsuario = await Usuario.findOne({where: { email }}); 
 
   if (existeUsuario) {
@@ -131,7 +125,7 @@ const registrar = async (req, res) => {
     })
   }
 
-  //* Almacenar un usuario
+  // Almacenar un usuario
   const usuario = await Usuario.create({
     nombre,
     email,
@@ -139,7 +133,7 @@ const registrar = async (req, res) => {
     token: generarId()
   });
 
-  //* Envia email de confirmación
+  // Envia email de confirmación
   emailRegistro({
     nombre: usuario.nombre,
     email: usuario.email,
@@ -147,14 +141,14 @@ const registrar = async (req, res) => {
   })
 
 
-  //* Mostrar mensaje de confirmación
+  // Mostrar mensaje de confirmación
   res.render('templates/mensaje', {
     pagina: 'Cuenta Creada Correctamente',
     mensaje: 'Hemos Enviado un Email de Confirmación, presiona en el enlace'
   })
 }
 
-//* Función que comprueba una cuenta
+// Función que comprueba una cuenta
 const confirmar = async (req, res) => {
   const { token } = req.params;
 
@@ -182,9 +176,6 @@ const confirmar = async (req, res) => {
   })
 }
 
-// Controlador para la vista de recuperación de contraseña
-// Este controlador maneja la solicitud para mostrar el formulario de recuperación de acceso.
-// Renderiza la plantilla 'auth/olvide-password.pug' y envía datos a la vista, como el título de la página.
 const formularioOlvidePassword = (req, res) => {
   res.render('auth/olvide-password', {
     pagina: 'Recupera tu acceso a Bienes Raices',
@@ -193,14 +184,14 @@ const formularioOlvidePassword = (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  //* Validación
+  // Validación
   await check('email').isEmail().withMessage('Eso no parece un email').run(req);
 
   let resultado = validationResult(req);
 
-  //* Verificar que el resultado este vacío
+  // Verificar que el resultado este vacío
   if (!resultado.isEmpty()) {
-    //* Errores
+    // Errores
     return res.render('auth/olvide-password', {
       pagina: 'Recupera tu acceso a Bienes Raices',
       csrfToken: req.csrfToken(),
@@ -266,9 +257,9 @@ const nuevoPassword = async (req, res) => {
 
   let resultado = validationResult(req);
 
-  //* Verificar que el resultado este vacío
+  // Verificar que el resultado este vacío
   if (!resultado.isEmpty()) {
-    //* Errores
+    // Errores
     return res.render('auth/reset-password', {
       pagina: 'Restablece tu Password',
       csrfToken: req.csrfToken(),
@@ -295,9 +286,6 @@ const nuevoPassword = async (req, res) => {
   })
 }
 
-// Exportación de los controladores
-// Permite que estos controladores sean utilizados en el archivo de rutas.
-// Esto ayuda a mantener una separación de responsabilidades, organizando la lógica de cada ruta en su propio archivo.
 export {
   formularioLogin,
   autenticar,
